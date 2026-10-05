@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Block Blast 32×32 — Claymorphism</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap');
+:root{
+  --bg:#e7edf6;--surface:#eaf1f9;--text:#17233b;--muted:#71809a;
+  --blue:#4b6fff;--blue2:#3657df;--green:#35b979;--orange:#ff9d43;--red:#ef6262;
+  --out:12px 12px 25px rgba(104,121,148,.22),-9px -9px 22px rgba(255,255,255,.95);
+  --in:inset 6px 6px 13px rgba(104,121,148,.17),inset -6px -6px 13px rgba(255,255,255,.96);
+}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 8% 8%,#fff 0 7%,transparent 25%),radial-gradient(circle at 90% 90%,#d9e4ff 0 5%,transparent 27%),var(--bg);font-family:"Be Vietnam Pro",sans-serif;color:var(--text);padding:20px}
+button{font:inherit}
+.app{max-width:1120px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:13px}.logo{width:56px;height:56px;border-radius:18px;background:linear-gradient(145deg,#6583ff,#3e5ee8);color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;box-shadow:var(--out)}h1{font-size:24px;margin:0;letter-spacing:-.7px}.sub{font-size:11px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:9px}.btn{border:0;background:var(--surface);color:var(--text);padding:11px 15px;border-radius:15px;box-shadow:8px 8px 16px rgba(104,121,148,.18),-6px -6px 13px #fff;cursor:pointer;font-weight:700;font-size:12px}.btn:active{box-shadow:var(--in);transform:translateY(1px)}.btn.primary{background:linear-gradient(145deg,#6381ff,#3e5ee8);color:#fff}
+.game{display:grid;grid-template-columns:minmax(590px,1fr) 330px;gap:22px;align-items:start}.panel{background:linear-gradient(145deg,#edf3fa,#e1e9f4);border-radius:28px;box-shadow:var(--out);padding:20px}.board-panel{padding:18px}.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.stat{background:#e7eef7;border-radius:17px;padding:10px 13px;box-shadow:var(--in)}.stat span{display:block;font-size:9px;color:var(--muted);font-weight:700}.stat strong{font-size:20px}.board-wrap{width:min(100%,650px);margin:auto;padding:11px;border-radius:22px;background:#d9e2ee;box-shadow:var(--in);touch-action:none}.board{display:grid;grid-template-columns:repeat(32,1fr);aspect-ratio:1;border-radius:13px;overflow:hidden;gap:1px;background:#c8d3e1;padding:1px}.cell{background:#e9eff6;min-width:0;transition:background .12s,transform .12s}.cell.filled{background:var(--c);box-shadow:inset 2px 2px 3px rgba(255,255,255,.28),inset -2px -2px 4px rgba(0,0,0,.13)}.cell.preview{background:var(--preview);box-shadow:inset 2px 2px 3px rgba(255,255,255,.25)}.cell.bad{background:rgba(239,98,98,.65)}
+.status{text-align:center;min-height:22px;padding:8px 0 0;color:var(--muted);font-size:11px;font-weight:700}.side h2{font-size:18px;margin:2px 0 4px}.side p{font-size:11px;color:var(--muted);line-height:1.6;margin:0 0 16px}.pieces{display:grid;gap:11px}.piece{min-height:88px;border:0;border-radius:20px;background:#e8eff8;box-shadow:var(--out);cursor:pointer;padding:14px;display:flex;align-items:center;justify-content:center;transition:.18s}.piece:hover{transform:translateY(-2px)}.piece.selected{box-shadow:var(--in),0 0 0 3px rgba(75,111,255,.17)}.mini{display:grid;gap:3px}.mini-cell{width:22px;height:22px;border-radius:5px;background:var(--c);box-shadow:inset 2px 2px 2px rgba(255,255,255,.28),inset -2px -2px 3px rgba(0,0,0,.12)}.legend{margin-top:18px;padding:14px;border-radius:18px;box-shadow:var(--in);font-size:11px;color:var(--muted);line-height:1.7}.legend b{color:var(--text)}.gameover{display:none;position:absolute;inset:0;background:rgba(226,234,245,.86);backdrop-filter:blur(4px);align-items:center;justify-content:center;border-radius:28px;z-index:5}.gameover.show{display:flex}.modal{width:min(90%,330px);padding:26px;border-radius:25px;text-align:center;background:var(--surface);box-shadow:var(--out)}.modal .emoji{font-size:38px}.modal h2{margin:8px 0}.modal p{color:var(--muted);font-size:12px}.score-big{font-size:38px;font-weight:800;margin:7px}.board-panel{position:relative}
+@media(max-width:900px){body{padding:12px}.game{grid-template-columns:1fr}.board-wrap{width:min(100%,690px)}.side{display:grid;grid-template-columns:1fr 1fr;gap:16px}.side>div:first-child{grid-column:1/-1}.legend{margin-top:0}.pieces{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.top{align-items:flex-start}.actions .btn:first-child{display:none}.logo{width:48px;height:48px}.brand h1{font-size:20px}.game{gap:14px}.panel{padding:13px;border-radius:22px}.board-panel{padding:11px}.hud{gap:6px}.stat{padding:8px}.stat strong{font-size:16px}.side{grid-template-columns:1fr}.side>div:first-child{grid-column:auto}.pieces{grid-template-columns:repeat(3,1fr)}.piece{min-height:76px;padding:8px}.mini-cell{width:17px;height:17px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo">▦</div><div><h1>Block Blast <span style="color:#4b6fff">32×32</span></h1><div class="sub">Claymorphism Edition • xếp khối, phá hàng, lập kỷ lục</div></div></div>
+  <div class="actions"><button class="btn" id="demo">Hướng dẫn</button><button class="btn primary" id="restart">Chơi lại</button></div>
+</header>
+
+<div class="game">
+<section class="panel board-panel">
+  <div class="hud">
+    <div class="stat"><span>ĐIỂM</span><strong id="score">0</strong></div>
+    <div class="stat"><span>KỶ LỤC</span><strong id="best">0</strong></div>
+    <div class="stat"><span>COMBO</span><strong id="combo">0</strong></div>
+  </div>
+  <div class="board-wrap">
+    <div class="board" id="board" aria-label="Bàn chơi Block Blast 32 x 32"></div>
+  </div>
+  <div class="status" id="status" aria-live="polite">Chọn một khối bên phải, sau đó chạm vào ô muốn đặt.</div>
+  <div class="gameover" id="gameover">
+    <div class="modal"><div class="emoji">💥</div><h2>Hết nước đi!</h2><p>Không còn khối nào có thể đặt lên bàn.</p><div class="score-big" id="finalScore">0</div><p>điểm</p><button class="btn primary" id="restart2">Chơi lại</button></div>
+  </div>
+</section>
+
+<aside class="panel side">
+  <div><h2>Khối tiếp theo</h2><p>Chọn 1 trong 3 khối. Bạn có thể đặt khối bằng cách <b>chọn khối → chạm ô</b>.</p></div>
+  <div class="pieces" id="pieces"></div>
+  <div class="legend"><b>Cách tính điểm</b><br>• Mỗi ô đặt: +1<br>• Mỗi hàng/cột phá: +32<br>• Phá nhiều hàng/cột cùng lúc được thưởng combo.<br>• Khi dùng hết 3 khối, bộ khối mới xuất hiện.</div>
+</aside>
+</div>
+</div>
+
+<script>
+(function(){
+const N=32, boardEl=document.getElementById('board'), piecesEl=document.getElementById('pieces');
+const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),comboEl=document.getElementById('combo');
+const statusEl=document.getElementById('status'),gameoverEl=document.getElementById('gameover'),finalScoreEl=document.getElementById('finalScore');
+const COLORS=['#4b6fff','#37b978','#ff9d43','#8b6cf6','#ef6262','#18a8a8','#e15aa5'];
+let grid=[], cells=[], pieces=[], selected=-1, score=0, best=0, combo=0, dead=false;
+
+const SHAPES=[
+ [[0,0]], [[0,0],[0,1]], [[0,0],[1,0]], [[0,0],[0,1],[0,2]], [[0,0],[1,0],[2,0]],
+ [[0,0],[0,1],[1,0],[1,1]], [[0,0],[0,1],[1,1]], [[0,1],[1,0],[1,1]], [[0,0],[1,0],[1,1]],
+ [[0,0],[0,1],[0,2],[0,3]], [[0,0],[1,0],[2,0],[3,0]], [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
+ [[0,0],[1,0],[2,0],[2,1]], [[0,0],[0,1],[0,2],[1,2]], [[0,0],[0,1],[1,0],[2,0]],
+ [[0,0],[0,1],[0,2],[1,1]], [[0,1],[1,0],[1,1],[1,2]], [[0,0],[1,0],[1,1],[2,1]],
+ [[0,1],[0,2],[1,0],[1,1]], [[0,0],[1,0],[2,0],[1,1],[1,2]], [[0,0],[0,1],[0,2],[1,1],[2,1]]
+];
+
+function cloneShape(s){return s.map(p=>[p[0],p[1]])}
+function norm(shape){
+ let minR=Math.min(...shape.map(p=>p[0])),minC=Math.min(...shape.map(p=>p[1]));
+ return shape.map(p=>[p[0]-minR,p[1]-minC]);
+}
+function rotate(shape){return norm(shape.map(p=>[p[1],-p[0]]))}
+function makePiece(){
+ let shape=cloneShape(SHAPES[Math.floor(Math.random()*SHAPES.length)]);
+ const turns=Math.floor(Math.random()*4);
+ for(let i=0;i<turns;i++) shape=rotate(shape);
+ return {shape:norm(shape),color:COLORS[Math.floor(Math.random()*COLORS.length)]};
+}
+function reset(){
+ grid=Array.from({length:N},()=>Array(N).fill(null)); score=0;combo=0;dead=false;selected=-1;
+ pieces=[makePiece(),makePiece(),makePiece()];
+ gameoverEl.classList.remove('show'); render(); setStatus('Chọn một khối bên phải, sau đó chạm vào ô muốn đặt.');
+}
+function renderBoard(){
+ boardEl.innerHTML=''; cells=[];
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+  const el=document.createElement('div');el.className='cell';
+  if(grid[r][c]){el.classList.add('filled');el.style.setProperty('--c',grid[r][c]);}
+  el.dataset.r=r;el.dataset.c=c;
+  boardEl.appendChild(el);cells.push(el);
+ }
+}
+function renderPieces(){
+ piecesEl.innerHTML='';
+ pieces.forEach((p,i)=>{
+  const btn=document.createElement('button');btn.type='button';btn.className='piece'+(i===selected?' selected':'');
+  btn.setAttribute('aria-label','Khối '+(i+1));
+  const maxR=Math.max(...p.shape.map(x=>x[0])),maxC=Math.max(...p.shape.map(x=>x[1]));
+  const mini=document.createElement('div');mini.className='mini';mini.style.gridTemplateColumns=`repeat(${maxC+1},22px)`;
+  p.shape.forEach(([r,c])=>{const x=document.createElement('span');x.className='mini-cell';x.style.setProperty('--c',p.color);x.style.gridRow=r+1;x.style.gridColumn=c+1;mini.appendChild(x)});
+  btn.appendChild(mini);btn.addEventListener('click',()=>{selected=(selected===i?-1:i);clearPreview();renderPieces();setStatus(selected<0?'Chọn một khối bên phải, sau đó chạm vào ô muốn đặt.':'Đã chọn khối '+(selected+1)+'. Chạm vào vị trí trên bàn.');});
+  piecesEl.appendChild(btn);
+ });
+}
+function canPlace(p,r,c){
+ return p.shape.every(([dr,dc])=>r+dr>=0&&r+dr<N&&c+dc>=0&&c+dc<N&&!grid[r+dr][c+dc]);
+}
+function clearPreview(){cells.forEach(x=>x.classList.remove('preview','bad'))}
+function preview(r,c){
+ clearPreview();if(selected<0||!pieces[selected])return;
+ const p=pieces[selected],ok=canPlace(p,r,c);
+ p.shape.forEach(([dr,dc])=>{if(r+dr>=0&&r+dr<N&&c+dc>=0&&c+dc<N){const el=cells[(r+dr)*N+(c+dc)];el.classList.add(ok?'preview':'bad');if(ok)el.style.setProperty('--preview',p.color)}});
+}
+function place(r,c){
+ if(selected<0||dead)return;
+ const p=pieces[selected];
+ if(!canPlace(p,r,c)){setStatus('Không đặt được khối ở đây. Hãy thử vị trí khác.');return}
+ p.shape.forEach(([dr,dc])=>grid[r+dr][c+dc]=p.color);
+ score+=p.shape.length; pieces[selected]=null; selected=-1;
+ const cleared=clearLines();
+ if(cleared){combo++;score+=cleared*32+Math.max(0,cleared-1)*32*combo;setStatus(`💥 Phá ${cleared} hàng/cột! Combo ×${combo}`)}
+ else combo=0;
+ pieces=pieces.filter(Boolean);
+ if(pieces.length===0)pieces=[makePiece(),makePiece(),makePiece()];
+ if(score>best)best=score;
+ render();
+ if(!hasMove()){dead=true;finalScoreEl.textContent=score;gameoverEl.classList.add('show');setStatus('Hết nước đi!');}
+}
+function clearLines(){
+ const rows=[],cols=[];
+ for(let r=0;r<N;r++)if(grid[r].every(Boolean))rows.push(r);
+ for(let c=0;c<N;c++){let full=true;for(let r=0;r<N;r++)if(!grid[r][c]){full=false;break}if(full)cols.push(c)}
+ rows.forEach(r=>{for(let c=0;c<N;c++)grid[r][c]=null});
+ cols.forEach(c=>{for(let r=0;r<N;r++)grid[r][c]=null});
+ return rows.length+cols.length;
+}
+function hasMove(){return pieces.some(p=>p&&Array.from({length:N},(_,r)=>Array.from({length:N},(_,c)=>canPlace(p,r,c)).some(Boolean)).some(Boolean))}
+function render(){renderBoard();renderPieces();scoreEl.textContent=score;bestEl.textContent=best;comboEl.textContent=combo}
+function setStatus(s){statusEl.textContent=s}
+boardEl.addEventListener('pointermove',e=>{if(selected<0)return;const el=e.target.closest('.cell');if(!el)return;preview(+el.dataset.r,+el.dataset.c)});
+boardEl.addEventListener('pointerleave',clearPreview);
+boardEl.addEventListener('pointerdown',e=>{const el=e.target.closest('.cell');if(el){e.preventDefault();place(+el.dataset.r,+el.dataset.c)}});
+document.getElementById('restart').addEventListener('click',reset);
+document.getElementById('restart2').addEventListener('click',reset);
+document.getElementById('demo').addEventListener('click',()=>setStatus('Mẹo: hãy ưu tiên dọn cả hàng và cột cùng lúc; giữ các vùng trống lớn ở giữa bàn để tăng khả năng sống lâu.'));
+reset();
+})();
+</script>
+</body>
+</html>
